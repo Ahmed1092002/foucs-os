@@ -1,0 +1,64 @@
+# Render Infrastructure as Code
+# Run: render deploy --confirm
+
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: focus-os-db
+    plan: starter  # or standard for production
+    databaseName: focus_os
+    user: focus_user
+    region: oregon  # or frankfurt, singapore, ohio
+    version: 16
+    autoCommit: true
+
+  # NestJS API Web Service
+  - type: web
+    name: focus-os-api
+    plan: starter  # or standard for production
+    region: oregon
+    runtime: node
+    buildCommand: |
+      npm ci
+      npx prisma migrate deploy
+      npx nest build
+    startCommand: node dist/main.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: focus-os-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: "3000"
+      - key: CORS_ORIGINS
+        value: "https://focus-os-web.vercel.app,http://localhost:3000"
+      - key: NODE_ENV
+        value: "production"
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+
+  # Flutter Web Static Site (optional - if you want it on Render instead of Vercel)
+  - type: static
+    name: focus-os-web
+    plan: free
+    region: oregon
+    buildCommand: |
+      cd mobile
+      flutter build web --release
+    staticPublishPath: ./mobile/build/web
+    envVars:
+      - key: API_BASE_URL
+        value: "https://focus-os-api.onrender.com/api/v1"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY

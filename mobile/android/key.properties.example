@@ -1,0 +1,7 @@
+# Release signing configuration — COPY TO key.properties AND FILL IN
+# NEVER COMMIT key.properties TO VERSION CONTROL
+
+storePassword=your_keystore_password
+keyPassword=your_key_password
+keyAlias=focus_os_key
+storeFile=../upload-keystore.jks
