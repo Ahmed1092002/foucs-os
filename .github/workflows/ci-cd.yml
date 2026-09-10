@@ -61,7 +61,7 @@ jobs:
         run: npx nest build
 
   # ──────────────────────────────────────────────
-  # Flutter: analyze, test, build web
+  # Flutter: analyze and test
   # ──────────────────────────────────────────────
   flutter:
     runs-on: ubuntu-latest
@@ -86,16 +86,6 @@ jobs:
 
       - name: Run tests
         run: flutter test --coverage
-
-      - name: Build Web (release)
-        run: flutter build web --release --dart-define=API_BASE_URL=https://focus-os-api.onrender.com/api/v1
-
-      - name: Upload Web Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: flutter-web
-          path: mobile/build/web/
-          retention-days: 7
 
   # ──────────────────────────────────────────────
   # Flutter Mobile: build APK & AAB (Linux runner avoids Windows Kotlin bug)
@@ -137,6 +127,13 @@ jobs:
         with:
           name: flutter-apk
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-aab
+          path: mobile/build/app/outputs/bundle/release/app-release.aab
           retention-days: 30
 
   # Signed mobile release and GitHub Release for version tags.
@@ -196,11 +193,4 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: flutter-aab
-          path: mobile/build/app/outputs/bundle/release/app-release.aab
-          retention-days: 30
 
