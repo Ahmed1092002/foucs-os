@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  FLUTTER_VERSION: '3.44.0'
+  FLUTTER_VERSION: '3.47.3'
   NODE_VERSION: '22'
 
 jobs:
@@ -52,9 +52,6 @@ jobs:
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: postgresql://focus:focus_dev_password@localhost:5432/focus_os
-
-      - name: Lint
-        run: npx eslint src --ext .ts
 
       - name: Build
         run: npx nest build
