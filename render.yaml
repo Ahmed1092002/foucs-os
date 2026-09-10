@@ -20,7 +20,7 @@ services:
     runtime: node
     rootDir: backend
     buildCommand: |
-      npm ci --legacy-peer-deps
+      npm ci --include=dev --legacy-peer-deps
       npx nest build
     preDeployCommand: npx prisma migrate deploy
     startCommand: node dist/main.js
