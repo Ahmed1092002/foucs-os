@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/main.js",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "test": "jest",
     "build": "nest build",
