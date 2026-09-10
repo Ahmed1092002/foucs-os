@@ -204,25 +204,3 @@ jobs:
           path: mobile/build/app/outputs/bundle/release/app-release.aab
           retention-days: 30
 
-  # ──────────────────────────────────────────────
-  # Deploy to Vercel (Flutter Web)
-  # ──────────────────────────────────────────────
-  deploy-web:
-    needs: [flutter]
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Web Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: flutter-web
-          path: ./web
-
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-          working-directory: ./web
